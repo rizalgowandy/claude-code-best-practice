@@ -419,9 +419,168 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- SLIDE 9: Models — Can answer / Can't answer                  -->
+    <!-- SLIDE 9: How LLMs Generate Text — Autoregressive Loop       -->
     <!-- ============================================================ -->
     <div class="slide" data-slide="9">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 120px); text-align: center; gap: 0;">
+
+            <!-- Title -->
+            <h1 style="border-bottom: none; padding-bottom: 0; font-size: 2.6rem; margin-bottom: 28px;">One token at a time</h1>
+
+            <!-- Animated SVG -->
+            <figure style="max-width: 860px; width: 100%; margin: 0 auto;">
+                <img
+                    src="../assets/llm/llm-basic.svg"
+                    alt="Animated diagram showing autoregressive generation: prompt feeds into LLM, which predicts one token, feeds it back, and repeats until the full answer is produced."
+                    style="width: 100%; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.10);"
+                />
+                <figcaption style="margin-top: 20px; font-size: 1rem; color: #555; font-style: italic; line-height: 1.5;">
+                    <strong style="font-style: normal; color: #1a1a1a;">The model produces one token per inference, feeding each result back as new input.</strong><br/>
+                    This is why streaming feels gradual &mdash; and why longer outputs cost more in both latency and API spend.
+                </figcaption>
+            </figure>
+
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SLIDE 10: What's a Token?                                    -->
+    <!-- ============================================================ -->
+    <div class="slide" data-slide="10">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 120px); text-align: center; gap: 0;">
+
+            <!-- Title -->
+            <h1 style="border-bottom: none; padding-bottom: 0; font-size: 2.6rem; margin-bottom: 28px;">Tokens, not words</h1>
+
+            <!-- Screenshot image -->
+            <figure style="max-width: 860px; width: 100%; margin: 0 auto;">
+                <img
+                    src="../assets/llm/tokens.jpg"
+                    alt="Screenshot of the OpenAI tokenizer showing the sentence about BPE split into 32 tokens across 105 characters, with tabs for GPT-5.x, GPT-4, and GPT-3 tokenizers."
+                    style="width: 100%; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.10);"
+                />
+                <figcaption style="margin-top: 20px; font-size: 1rem; color: #555; font-style: italic; line-height: 1.5;">
+                    <strong style="font-style: normal; color: #1a1a1a;">105 characters &rarr; 32 tokens. Rule of thumb: ~4 chars per token in English.</strong><br/>
+                    Each model generation uses a different tokenizer &mdash; same text, different token count, different cost.
+                </figcaption>
+            </figure>
+
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SLIDE 11: Tokens In, Tokens Out — Full Picture               -->
+    <!-- ============================================================ -->
+    <div class="slide" data-slide="11">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 120px); text-align: center; gap: 0;">
+
+            <!-- Title -->
+            <h1 style="border-bottom: none; padding-bottom: 0; font-size: 2.6rem; margin-bottom: 28px;">Tokens in, tokens out</h1>
+
+            <!-- Animated SVG -->
+            <figure style="max-width: 860px; width: 100%; margin: 0 auto;">
+                <img
+                    src="../assets/llm/llm-advanced.svg"
+                    alt="Animated diagram combining tokenization and autoregressive generation: the BPE-tokenized prompt feeds into the LLM, which generates the answer token-by-token using the same shared vocabulary."
+                    style="width: 100%; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.10);"
+                />
+                <figcaption style="margin-top: 20px; font-size: 1rem; color: #555; font-style: italic; line-height: 1.5;">
+                    <strong style="font-style: normal; color: #1a1a1a;">Input and output share the same vocabulary &mdash; tokenization shapes what the model even &ldquo;sees&rdquo;.</strong><br/>
+                    &ldquo;Anthropic&rdquo; becomes &ldquo;Anth&rdquo; + &ldquo;ropic&rdquo; because that&rsquo;s how it appears most often in training data.
+                </figcaption>
+            </figure>
+
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SLIDE 12: What the Model Actually Sees — Integer Token IDs  -->
+    <!-- ============================================================ -->
+    <div class="slide" data-slide="12">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 120px); text-align: center; gap: 0;">
+
+            <!-- Title -->
+            <h1 style="border-bottom: none; padding-bottom: 0; font-size: 2.6rem; margin-bottom: 28px;">What the model actually sees</h1>
+
+            <!-- Animated SVG — wider asset (1360×600 viewBox); use max-width 960px to fill the slide without overcrowding -->
+            <figure style="max-width: 960px; width: 100%; margin: 0 auto;">
+                <img
+                    src="../assets/llm/llm-animation-tokenids.svg"
+                    alt="Animated diagram showing the 32 integer token IDs the model receives: e.g. 28133 for 'Does', 17554 for ' Chat', 162016 for 'GPT', 97481 for ' Claude'. Generated tokens are also shown as IDs. Vocab size V ≈ 200,000."
+                    style="width: 100%; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.10);"
+                />
+                <figcaption style="margin-top: 20px; font-size: 1rem; color: #555; font-style: italic; line-height: 1.5;">
+                    <strong style="font-style: normal; color: #1a1a1a;">The model never reads text &mdash; it reads a sequence of integers, each one an index into a vocabulary of ~200,000 entries.</strong><br/>
+                    Notice the comma is always ID&nbsp;11 &mdash; the same punctuation mark maps to the same integer, everywhere, every time.
+                </figcaption>
+            </figure>
+
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SLIDE 13: Models are stateless                               -->
+    <!-- ============================================================ -->
+    <div class="slide" data-slide="13">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 120px); text-align: center; gap: 0;">
+
+            <!-- Title -->
+            <h1 style="border-bottom: none; padding-bottom: 0; font-size: 2.4rem; margin-bottom: 32px;">&#x1F4AC; Models are stateless</h1>
+
+            <!-- Dialog diagram — two-column conversation -->
+            <div style="max-width: 700px; width: 100%; margin: 0 auto 28px;">
+
+                <!-- Column headers -->
+                <div style="display: flex; justify-content: space-between; margin-bottom: 14px; padding: 0 24px;">
+                    <span style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #1565c0; background: rgba(21,101,192,0.08); border: 1px solid rgba(21,101,192,0.2); padding: 4px 16px; border-radius: 999px;">User</span>
+                    <span style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #7b1fa2; background: rgba(123,31,162,0.08); border: 1px solid rgba(123,31,162,0.2); padding: 4px 16px; border-radius: 999px;">Model</span>
+                </div>
+
+                <!-- Turn 1: User → Model -->
+                <div style="display: flex; justify-content: flex-start; margin-bottom: 10px;">
+                    <div style="background: #e3f2fd; border: 1px solid #90caf9; border-radius: 18px 18px 18px 4px; padding: 12px 18px; max-width: 62%; text-align: left; position: relative;">
+                        <span style="font-size: 1rem; color: #1a1a1a;">&ldquo;My name is Shayan.&rdquo;</span>
+                        <span style="display: block; font-size: 0.7rem; color: #888; margin-top: 4px; text-align: right;">&#x279C; to model</span>
+                    </div>
+                </div>
+
+                <!-- Turn 2: Model → User -->
+                <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+                    <div style="background: #f3e5f5; border: 1px solid #ce93d8; border-radius: 18px 18px 4px 18px; padding: 12px 18px; max-width: 62%; text-align: left; position: relative;">
+                        <span style="font-size: 1rem; color: #1a1a1a;">&ldquo;Okay, your name is Shayan.&rdquo;</span>
+                        <span style="display: block; font-size: 0.7rem; color: #888; margin-top: 4px;">&#x279C; to user</span>
+                    </div>
+                </div>
+
+                <!-- Turn 3: User → Model -->
+                <div style="display: flex; justify-content: flex-start; margin-bottom: 10px;">
+                    <div style="background: #e3f2fd; border: 1px solid #90caf9; border-radius: 18px 18px 18px 4px; padding: 12px 18px; max-width: 62%; text-align: left;">
+                        <span style="font-size: 1rem; color: #1a1a1a;">&ldquo;What is my name?&rdquo;</span>
+                        <span style="display: block; font-size: 0.7rem; color: #888; margin-top: 4px; text-align: right;">&#x279C; to model</span>
+                    </div>
+                </div>
+
+                <!-- Turn 4: Model → User (can't remember) -->
+                <div style="display: flex; justify-content: flex-end; margin-bottom: 0;">
+                    <div style="background: #fce4ec; border: 1px solid #f48fb1; border-radius: 18px 18px 4px 18px; padding: 12px 18px; max-width: 72%; text-align: left;">
+                        <span style="font-size: 1rem; color: #1a1a1a;">&ldquo;I don&rsquo;t know your name &mdash; I have no memory of what you just said.&rdquo;</span>
+                        <span style="display: block; font-size: 0.7rem; color: #888; margin-top: 4px;">&#x279C; to user</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Caption strip — mirrors slide-12 pattern -->
+            <p style="font-size: 1.6rem; font-weight: 700; color: #1a1a1a; margin: 8px 0 4px; letter-spacing: -0.02em; line-height: 1.2;">Every turn is a fresh API call.</p>
+            <p style="font-size: 1.1rem; font-weight: 400; color: #C0392B; margin: 0; letter-spacing: 0.01em;">Memory only exists if the harness replays the transcript.</p>
+
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SLIDE 14: "Stochastic Parrots"                               -->
+    <!-- ============================================================ -->
+    <div class="slide" data-slide="14">
 
         <!-- Headline -->
         <div style="text-align: center; margin-bottom: 36px;">
@@ -489,9 +648,9 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- SLIDE 10: Temperature = 0 ≠ Deterministic                   -->
+    <!-- SLIDE 15: Temperature = 0 ≠ Deterministic                   -->
     <!-- ============================================================ -->
-    <div class="slide" data-slide="10">
+    <div class="slide" data-slide="15">
 
         <!-- Headline -->
         <div style="text-align: center; margin-bottom: 32px;">
@@ -557,165 +716,6 @@
         <!-- Attribution -->
         <p style="font-size: 0.75rem; text-align: center; margin: 12px 0 0;"><span style="color: #1a1a1a; font-weight: 600;">Source:</span> <a href="https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/" target="_blank" rel="noopener noreferrer" style="color: #0d47a1; text-decoration: underline;">Thinking Machines &mdash; <em>Defeating Nondeterminism in LLM Inference</em> (2025)</a></p>
 
-    </div>
-
-    <!-- ============================================================ -->
-    <!-- SLIDE 11: How LLMs Generate Text — Autoregressive Loop       -->
-    <!-- ============================================================ -->
-    <div class="slide" data-slide="11">
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 120px); text-align: center; gap: 0;">
-
-            <!-- Title -->
-            <h1 style="border-bottom: none; padding-bottom: 0; font-size: 2.6rem; margin-bottom: 28px;">One token at a time</h1>
-
-            <!-- Animated SVG -->
-            <figure style="max-width: 860px; width: 100%; margin: 0 auto;">
-                <img
-                    src="../assets/llm/llm-basic.svg"
-                    alt="Animated diagram showing autoregressive generation: prompt feeds into LLM, which predicts one token, feeds it back, and repeats until the full answer is produced."
-                    style="width: 100%; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.10);"
-                />
-                <figcaption style="margin-top: 20px; font-size: 1rem; color: #555; font-style: italic; line-height: 1.5;">
-                    <strong style="font-style: normal; color: #1a1a1a;">The model produces one token per inference, feeding each result back as new input.</strong><br/>
-                    This is why streaming feels gradual &mdash; and why longer outputs cost more in both latency and API spend.
-                </figcaption>
-            </figure>
-
-        </div>
-    </div>
-
-    <!-- ============================================================ -->
-    <!-- SLIDE 12: What's a Token?                                    -->
-    <!-- ============================================================ -->
-    <div class="slide" data-slide="12">
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 120px); text-align: center; gap: 0;">
-
-            <!-- Title -->
-            <h1 style="border-bottom: none; padding-bottom: 0; font-size: 2.6rem; margin-bottom: 28px;">Tokens, not words</h1>
-
-            <!-- Screenshot image -->
-            <figure style="max-width: 860px; width: 100%; margin: 0 auto;">
-                <img
-                    src="../assets/llm/tokens.jpg"
-                    alt="Screenshot of the OpenAI tokenizer showing the sentence about BPE split into 32 tokens across 105 characters, with tabs for GPT-5.x, GPT-4, and GPT-3 tokenizers."
-                    style="width: 100%; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.10);"
-                />
-                <figcaption style="margin-top: 20px; font-size: 1rem; color: #555; font-style: italic; line-height: 1.5;">
-                    <strong style="font-style: normal; color: #1a1a1a;">105 characters &rarr; 32 tokens. Rule of thumb: ~4 chars per token in English.</strong><br/>
-                    Each model generation uses a different tokenizer &mdash; same text, different token count, different cost.
-                </figcaption>
-            </figure>
-
-        </div>
-    </div>
-
-    <!-- ============================================================ -->
-    <!-- SLIDE 13: Tokens In, Tokens Out — Full Picture               -->
-    <!-- ============================================================ -->
-    <div class="slide" data-slide="13">
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 120px); text-align: center; gap: 0;">
-
-            <!-- Title -->
-            <h1 style="border-bottom: none; padding-bottom: 0; font-size: 2.6rem; margin-bottom: 28px;">Tokens in, tokens out</h1>
-
-            <!-- Animated SVG -->
-            <figure style="max-width: 860px; width: 100%; margin: 0 auto;">
-                <img
-                    src="../assets/llm/llm-advanced.svg"
-                    alt="Animated diagram combining tokenization and autoregressive generation: the BPE-tokenized prompt feeds into the LLM, which generates the answer token-by-token using the same shared vocabulary."
-                    style="width: 100%; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.10);"
-                />
-                <figcaption style="margin-top: 20px; font-size: 1rem; color: #555; font-style: italic; line-height: 1.5;">
-                    <strong style="font-style: normal; color: #1a1a1a;">Input and output share the same vocabulary &mdash; tokenization shapes what the model even &ldquo;sees&rdquo;.</strong><br/>
-                    &ldquo;Anthropic&rdquo; becomes &ldquo;Anth&rdquo; + &ldquo;ropic&rdquo; because that&rsquo;s how it appears most often in training data.
-                </figcaption>
-            </figure>
-
-        </div>
-    </div>
-
-    <!-- ============================================================ -->
-    <!-- SLIDE 14: What the Model Actually Sees — Integer Token IDs  -->
-    <!-- ============================================================ -->
-    <div class="slide" data-slide="14">
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 120px); text-align: center; gap: 0;">
-
-            <!-- Title -->
-            <h1 style="border-bottom: none; padding-bottom: 0; font-size: 2.6rem; margin-bottom: 28px;">What the model actually sees</h1>
-
-            <!-- Animated SVG — wider asset (1360×600 viewBox); use max-width 960px to fill the slide without overcrowding -->
-            <figure style="max-width: 960px; width: 100%; margin: 0 auto;">
-                <img
-                    src="../assets/llm/llm-animation-tokenids.svg"
-                    alt="Animated diagram showing the 32 integer token IDs the model receives: e.g. 28133 for 'Does', 17554 for ' Chat', 162016 for 'GPT', 97481 for ' Claude'. Generated tokens are also shown as IDs. Vocab size V ≈ 200,000."
-                    style="width: 100%; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.10);"
-                />
-                <figcaption style="margin-top: 20px; font-size: 1rem; color: #555; font-style: italic; line-height: 1.5;">
-                    <strong style="font-style: normal; color: #1a1a1a;">The model never reads text &mdash; it reads a sequence of integers, each one an index into a vocabulary of ~200,000 entries.</strong><br/>
-                    Notice the comma is always ID&nbsp;11 &mdash; the same punctuation mark maps to the same integer, everywhere, every time.
-                </figcaption>
-            </figure>
-
-        </div>
-    </div>
-
-    <!-- ============================================================ -->
-    <!-- SLIDE 15: Models are stateless                               -->
-    <!-- ============================================================ -->
-    <div class="slide" data-slide="15">
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 120px); text-align: center; gap: 0;">
-
-            <!-- Title -->
-            <h1 style="border-bottom: none; padding-bottom: 0; font-size: 2.4rem; margin-bottom: 32px;">&#x1F4AC; Models are stateless</h1>
-
-            <!-- Dialog diagram — two-column conversation -->
-            <div style="max-width: 700px; width: 100%; margin: 0 auto 28px;">
-
-                <!-- Column headers -->
-                <div style="display: flex; justify-content: space-between; margin-bottom: 14px; padding: 0 24px;">
-                    <span style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #1565c0; background: rgba(21,101,192,0.08); border: 1px solid rgba(21,101,192,0.2); padding: 4px 16px; border-radius: 999px;">User</span>
-                    <span style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #7b1fa2; background: rgba(123,31,162,0.08); border: 1px solid rgba(123,31,162,0.2); padding: 4px 16px; border-radius: 999px;">Model</span>
-                </div>
-
-                <!-- Turn 1: User → Model -->
-                <div style="display: flex; justify-content: flex-start; margin-bottom: 10px;">
-                    <div style="background: #e3f2fd; border: 1px solid #90caf9; border-radius: 18px 18px 18px 4px; padding: 12px 18px; max-width: 62%; text-align: left; position: relative;">
-                        <span style="font-size: 1rem; color: #1a1a1a;">&ldquo;My name is Shayan.&rdquo;</span>
-                        <span style="display: block; font-size: 0.7rem; color: #888; margin-top: 4px; text-align: right;">&#x279C; to model</span>
-                    </div>
-                </div>
-
-                <!-- Turn 2: Model → User -->
-                <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
-                    <div style="background: #f3e5f5; border: 1px solid #ce93d8; border-radius: 18px 18px 4px 18px; padding: 12px 18px; max-width: 62%; text-align: left; position: relative;">
-                        <span style="font-size: 1rem; color: #1a1a1a;">&ldquo;Okay, your name is Shayan.&rdquo;</span>
-                        <span style="display: block; font-size: 0.7rem; color: #888; margin-top: 4px;">&#x279C; to user</span>
-                    </div>
-                </div>
-
-                <!-- Turn 3: User → Model -->
-                <div style="display: flex; justify-content: flex-start; margin-bottom: 10px;">
-                    <div style="background: #e3f2fd; border: 1px solid #90caf9; border-radius: 18px 18px 18px 4px; padding: 12px 18px; max-width: 62%; text-align: left;">
-                        <span style="font-size: 1rem; color: #1a1a1a;">&ldquo;What is my name?&rdquo;</span>
-                        <span style="display: block; font-size: 0.7rem; color: #888; margin-top: 4px; text-align: right;">&#x279C; to model</span>
-                    </div>
-                </div>
-
-                <!-- Turn 4: Model → User (can't remember) -->
-                <div style="display: flex; justify-content: flex-end; margin-bottom: 0;">
-                    <div style="background: #fce4ec; border: 1px solid #f48fb1; border-radius: 18px 18px 4px 18px; padding: 12px 18px; max-width: 72%; text-align: left;">
-                        <span style="font-size: 1rem; color: #1a1a1a;">&ldquo;I don&rsquo;t know your name &mdash; I have no memory of what you just said.&rdquo;</span>
-                        <span style="display: block; font-size: 0.7rem; color: #888; margin-top: 4px;">&#x279C; to user</span>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Caption strip — mirrors slide-12 pattern -->
-            <p style="font-size: 1.6rem; font-weight: 700; color: #1a1a1a; margin: 8px 0 4px; letter-spacing: -0.02em; line-height: 1.2;">Every turn is a fresh API call.</p>
-            <p style="font-size: 1.1rem; font-weight: 400; color: #C0392B; margin: 0; letter-spacing: 0.01em;">Memory only exists if the harness replays the transcript.</p>
-
-        </div>
     </div>
 
     <!-- ============================================================ -->
